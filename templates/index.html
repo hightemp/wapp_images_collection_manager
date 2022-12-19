@@ -1,0 +1,114 @@
+{% import "macros.html" as macros %}
+{% include "b_header.html" %}
+
+<div class="wrapper">
+    <div class="groups-panel">
+        <form action="">
+            <div class="btn-group w100">
+                <button class="btn btn-success" type="submit" name="action" value="create_group"><i class="bi bi-file-plus"></i></button>
+                <button class="btn btn-secondary" type="submit" name="action" value="edit_group"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-danger" type="submit" name="action" value="remove_group"><i class="bi bi-trash"></i></button>
+                <button class="btn btn-danger" type="submit" name="action" value="clean_groups"><i class="bi bi-trash-fill"></i></button>
+            </div>
+
+            <div class="list-group left-panel-list">
+                {% for oGroup in aGroups %}
+                    <div class="input-group group-row">
+                        <div class="input-group-text">
+                            <input class="form-check-input mt-0" type="checkbox" value="" name="groups[{{oGroup[0]}}]" />
+                        </div>
+                        <a 
+                            class="list-group-item list-group-item-action {{ 'active' if oGroup[0]|string == sSelGroup|string }} " 
+                            href="?sSelGroup={{ oGroup[0] }}"
+                        >
+                            {{ oGroup[1] }}
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </form>
+    </div>
+    <div class="categoreies-panel">
+        {% if sSelGroup %}
+        <form action="">
+            <input type="hidden" name="sSelGroup" value="{{sSelGroup}}">
+
+            {% for sCategory in aOpenedCategories %}
+            <input type="hidden" name="c[{{sCategory}}]" value="{{sCategory}}">
+            {% endfor %}
+
+            <div class="btn-group w100">
+                <button class="btn btn-success" title="" type="submit" name="action" value="create_category"><i class="bi bi-file-plus"></i></button>
+                <button class="btn btn-secondary" title="" type="submit" name="action" value="edit_category"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-danger" title="" type="submit" name="action" value="remove_category"><i class="bi bi-trash"></i></button>
+                <button class="btn btn-danger" title="" type="submit" name="action" value="clean_categories"><i class="bi bi-trash-fill"></i></button>
+                <button class="btn btn-secondary" title="Переместить" type="submit" name="action" value="move_category"><i class="bi bi-bezier2"></i></button>
+            </div>
+
+            <div class="list-group left-panel-list">
+                {% for oCategory in aCategories %}
+                    <div class="input-group category-row">
+                        <div class="input-group-text">
+                            <input class="form-check-input mt-0" type="checkbox" value="" name="categories[{{oCategory[0]}}]" />
+                        </div>
+                        <div class="tree-icon">
+                            {% if aOpenedCategories[oCategory[0]]|string == oCategory[0]|string %}
+                            <button class="btn btn-light" type="submit" name="c[{{oCategory[0]}}]" value=""><i class="bi bi-dash-square"></i></button>
+                            {% else %}
+                            <button class="btn btn-light" type="submit" name="c[{{oCategory[0]}}]" value="{{oCategory[0]}}"><i class="bi bi-plus-square"></i></button>
+                            {% endif %}
+                            <!-- <a href="#"><i class="bi bi-minus-square"></i></a> -->
+                        </div>
+                        <button 
+                            class="list-group-item list-group-item-action {{ 'active' if oCategory[0]|string == sSelCategory|string }} " 
+                            type="submit" 
+                            name="sSelCategory" 
+                            value="{{ oCategory[0] }}"
+                        >
+                            {{ oCategory[1]|safe }}
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </form>
+        {% endif %}
+    </div>
+    <div class="images-panel">
+        {% if sSelCategory %}
+        <form action="">
+            <input type="hidden" name="sSelGroup" value="{{sSelGroup}}">
+            <input type="hidden" name="sSelCategory" value="{{sSelCategory}}">
+            <input type="hidden" name="sSelImage" value="{{sSelImage}}">
+
+            <div class="actions-panel">
+                <div class="btn-group w100">
+                    <button class="btn btn-success" title="" type="submit" name="action" value="create_image"><i class="bi bi-file-plus"></i></button>
+                    <button class="btn btn-secondary" title="" type="submit" name="action" value="edit_image"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-danger" title="" type="submit" name="action" value="remove_image"><i class="bi bi-trash"></i></button>
+                    <button class="btn btn-danger" title="" type="submit" name="action" value="clean_images"><i class="bi bi-trash-fill"></i></button>
+                    <button class="btn btn-secondary" title="Переместить" type="submit" name="action" value="move_image"><i class="bi bi-bezier2"></i></button>
+                    <div class="actions-panel-space"></div>
+                </div>
+            </div>
+            
+            <div class="gallery-grid">
+                {% for oImage in aImages %}
+                    <div class="image-cell">
+                        <input class="form-check-input mt-0" type="checkbox" value="" name="images[{{oImage[0]}}]" />
+                        <a 
+                            target="__blank"
+                            class="list-group-item list-group-item-action {{ 'active' if oImage[0]|string == sSelImage|string }} " 
+                            href="getfile?sID={{ oImage[0] }}"
+                        >
+                            <img src="{{ oImage[2] }}" alt="">
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+{% include "b_footer.html" %}

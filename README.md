@@ -1,0 +1,3 @@
+# wapp_images_collection_manager
+
+Коллекция изображений

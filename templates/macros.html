@@ -1,0 +1,37 @@
+
+{% macro icons_list(aIcons, iIndex) -%}
+<div class="right-panel-list grid">
+    {% for aIcon in aIcons %}
+    <div class="blk-item">
+        <input type="checkbox" name="icons[]" id="icon_{{aIcon[0]}}" value="{{aIcon[0]}}">
+        <label for="icon_{{aIcon[0]}}">
+            <i class="bi {{aIcon[iIndex]}}"></i>
+        </label>
+    </div>
+    {% endfor %}
+</div>
+{%- endmacro %}
+
+{% macro dropdown(aList, sTitle) -%}
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ sTitle }}
+    </button>
+    <ul class="dropdown-menu">
+        {% for oItem in aList %}
+        <li><a class="dropdown-item" href="{{ oItem[0] }}">{{ oItem[1] }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{%- endmacro %}
+
+{% macro html_select_from_list(sName, aList, iValueIndex, iTitleIndex, sSelectedItem) -%}
+<select class="form-select form-select-sm" name="{{ sName }}">
+    {% for oItem in aList %}
+    <option 
+        value="{{oItem[iValueIndex]}}"
+        {{ 'selected' if oItem[iValueIndex]|string == sSelectedItem|string }}
+    >{{oItem[iTitleIndex]}}</option>
+    {% endfor %}
+</select>
+{%- endmacro %}
