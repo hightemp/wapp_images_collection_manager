@@ -1,3 +1,5 @@
 # wapp_images_collection_manager
 
-Коллекция изображений
+Менеджер коллекций изображений
+
+![](screenshots/2022-12-19_07-23.png)
