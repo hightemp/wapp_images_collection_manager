@@ -192,14 +192,75 @@ input:checked+label {
     width: 150px;
     height: 150px;
     overflow: hidden;    
+    outline: 1px solid #eee;
 }
 
 .image-cell img {
     width: 150px;
+    align-self: center;
+}
+
+.image-cell img.error {
+    background: rgb(255, 94, 94);
+    width: 150px;
+    height: 150px;
+}
+
+.image-cell img.error::before {
+    display: block;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    content: "Изображение не найдено";
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
 }
 
 .image-cell input {
     position: absolute;
     padding: 10px;
     z-index: 100;
+}
+
+.upload-wrapper {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 10px;
+    gap: 10px;
+    background: #eee;
+}
+
+.upload-wrapper-left {
+    border: 1px solid #eee;
+    width: 500px;
+    height: 60vh;
+    overflow: scroll;
+    background: #fff;
+}
+
+.upload-wrapper-right {
+    /* display: flex */
+}
+
+.upload-wrapper-right > * {
+    width: 100%;
+}
+
+.upload-wrapper-form {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+.category-title {
+    display: grid;
+    grid-template-columns: 1fr 30px;
 }

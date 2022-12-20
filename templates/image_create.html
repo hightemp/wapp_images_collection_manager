@@ -1,0 +1,38 @@
+{% import "macros.html" as macros %}
+{% include "b_header.html" %}
+
+<form class="upload-wrapper-form" action="" method="post">
+    <div>
+        <div class="upload-wrapper">
+
+            <div class="upload-wrapper-left" contenteditable="true">
+                
+            </div>
+            <div class="upload-wrapper-right">
+                {% for sI in range(0, 10) %}
+                <div class="mb-3">
+                    <input class="form-control" type="file" id="formFile" name="files[]">
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+        <textarea id="html-images" name="html-images" style="display:none"></textarea>
+
+        <br>
+        <div class="d-grid gap-2 d-md-block">
+            <button class="btn btn-success" name="action" value="accept_create_image" type="submit">OK</button>
+            <button class="btn btn-danger" name="action" value="cancel" type="submit">Отмена</button>
+        </div>
+    </div>
+</form>
+
+<script>
+$(document).ready(() => {
+    $(".upload-wrapper-left").on('input', (oEvent) => {
+        $("#html-images").val(oEvent.target.innerHTML)
+    })
+})
+</script>
+
+{% include "b_footer.html" %}

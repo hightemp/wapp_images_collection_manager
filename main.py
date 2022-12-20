@@ -6,11 +6,14 @@ import glob
 import re
 import base64
 import html
+import requests
+import uuid
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-UPLOAD_PATH = os.path.join(os.path.dirname(__file__), "static/uploads")
+UPLOAD_PATH_REL = "static/uploads"
+UPLOAD_PATH = os.path.join(os.path.dirname(__file__), UPLOAD_PATH_REL)
 DATABASE = './database.db'
 
 def get_db():
@@ -78,17 +81,20 @@ def parse_multi_form(form):
 def fnIterCategories(aCategories, aNewCategories, aOpened, iLevel=0):
     for oCategory in aCategories:
         sID = oCategory[0]
-        aQueryCategories = query_db('SELECT * FROM categories WHERE parent_id=?', (sID,))
+        # SELECT * FROM categories WHERE parent_id=?
+        aQueryCategories = query_db("SELECT * FROM categories WHERE parent_id=?", (sID,))
         
         aIterCategories = []
         if (sID in aOpened) and aQueryCategories and len(aQueryCategories)>0:
             aIterCategories = fnIterCategories(aQueryCategories, aNewCategories, aOpened, iLevel+1)
         
+        oCntImages = query_db("SELECT COUNT(*) FROM images WHERE category_id=?", (oCategory[0],))
         oCategory = list(oCategory)
         sSpace = ""
         if iLevel:
             sSpace = "&nbsp;"
         oCategory[1] = iLevel * "&nbsp;&nbsp;" + sSpace + oCategory[1]
+        oCategory.append(oCntImages[0][0])
         aNewCategories = aNewCategories + [oCategory] + aIterCategories
     
     print(">>", aNewCategories)
@@ -110,17 +116,54 @@ def index():
     sSelCategory = request.args.get('sSelCategory', '')
     sSelImage = request.args.get('sSelImage', '')
 
+    print("args ", request.args)
+    print("form ", request.form)
+
+    if ("action" in request.form):
+        print(">> 1", request.form)
+        if request.form["action"]=="cancel":
+            return redirect("/")
+        if request.form["action"]=="accept_create_image":
+            sHTML = request.form.get("html-images")
+            oM = re.findall(r"<img[^<]*src=\"([^\"]+)\"", sHTML)
+            if oM != None and len(oM)>0:
+                for sM in oM:
+                    response = requests.get(sM)
+                    sExt = "png"
+                    try:
+                        sExt = response.headers['Content-Type'].split('/')[1]
+                    except:
+                        pass
+                    filename = str(uuid.uuid4())
+                    sFileName = f"{filename}.{sExt}"
+                    sFilePath = f"{UPLOAD_PATH}/{sFileName}"
+                    sRelFilePath = f"{UPLOAD_PATH_REL}/{sFileName}"
+                    open(sFilePath, "wb").write(response.content)
+                    get_db().execute("INSERT INTO images (name, path, category_id) VALUES (?, ?, ?)", (sFileName, sRelFilePath, sSelCategory))
+                    get_db().commit()
+            return redirect("/")
     if ("action" in request.args):
+        print(">> 2", request.args)
+        if request.args["action"]=="create_image":
+            return render_template('image_create.html')
         if request.args["action"]=="image_upload":
             pass
-        if request.args["action"]=="category_add_to_group":
+        if request.args["action"]=="create_category":
             pass
-        if request.args["action"]=="category_remove_from_group":
+        if request.args["action"]=="remove_category":
             pass
-        if request.args["action"]=="image_add_to_category":
-            pass
-        if request.args["action"]=="image_remove_from_category":
-            pass
+        if request.args["action"]=="remove_image":
+            aImages = request.args.getlist('images[]')
+            print(">>3 ", aImages)
+            for sImageID in aImages:
+                oImage = query_db('SELECT * FROM images WHERE id=? LIMIT 1', (sImageID,))
+                if oImage:
+                    try:
+                        os.unlink(oImage[0][2])
+                    except:
+                        pass
+                get_db().execute("DELETE FROM images WHERE id=?", (sImageID,))
+                get_db().commit()
 
     aGroups = query_db('SELECT * FROM groups')
 

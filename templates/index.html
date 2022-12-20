@@ -5,6 +5,7 @@
     <div class="groups-panel">
         <form action="">
             <div class="btn-group w100">
+                <a class="btn btn-primary" type="submit" href="{{sBaseURL}}"><i class="bi bi-reload"></i></a>
                 <button class="btn btn-success" type="submit" name="action" value="create_group"><i class="bi bi-file-plus"></i></button>
                 <button class="btn btn-secondary" type="submit" name="action" value="edit_group"><i class="bi bi-pencil"></i></button>
                 <button class="btn btn-danger" type="submit" name="action" value="remove_group"><i class="bi bi-trash"></i></button>
@@ -15,7 +16,7 @@
                 {% for oGroup in aGroups %}
                     <div class="input-group group-row">
                         <div class="input-group-text">
-                            <input class="form-check-input mt-0" type="checkbox" value="" name="groups[{{oGroup[0]}}]" />
+                            <input class="form-check-input mt-0" type="checkbox" value="{{oGroup[0]}}" name="groups[{{oGroup[0]}}]" />
                         </div>
                         <a 
                             class="list-group-item list-group-item-action {{ 'active' if oGroup[0]|string == sSelGroup|string }} " 
@@ -38,6 +39,7 @@
             {% endfor %}
 
             <div class="btn-group w100">
+                <a class="btn btn-primary" type="submit" href="{{sBaseURL}}"><i class="bi bi-arrow-repeat"></i></a>
                 <button class="btn btn-success" title="" type="submit" name="action" value="create_category"><i class="bi bi-file-plus"></i></button>
                 <button class="btn btn-secondary" title="" type="submit" name="action" value="edit_category"><i class="bi bi-pencil"></i></button>
                 <button class="btn btn-danger" title="" type="submit" name="action" value="remove_category"><i class="bi bi-trash"></i></button>
@@ -49,7 +51,7 @@
                 {% for oCategory in aCategories %}
                     <div class="input-group category-row">
                         <div class="input-group-text">
-                            <input class="form-check-input mt-0" type="checkbox" value="" name="categories[{{oCategory[0]}}]" />
+                            <input class="form-check-input mt-0" type="checkbox" value="{{oCategory[0]}}" name="categories[{{oCategory[0]}}]" />
                         </div>
                         <div class="tree-icon">
                             {% if aOpenedCategories[oCategory[0]]|string == oCategory[0]|string %}
@@ -60,12 +62,12 @@
                             <!-- <a href="#"><i class="bi bi-minus-square"></i></a> -->
                         </div>
                         <button 
-                            class="list-group-item list-group-item-action {{ 'active' if oCategory[0]|string == sSelCategory|string }} " 
+                            class="list-group-item list-group-item-action category-title flex {{ 'active' if oCategory[0]|string == sSelCategory|string }} " 
                             type="submit" 
                             name="sSelCategory" 
                             value="{{ oCategory[0] }}"
                         >
-                            {{ oCategory[1]|safe }}
+                            <span>{{ oCategory[1]|safe }}</span> <span class="badge text-bg-secondary">{{ oCategory[4]|string }}</span>
                         </button>
                     </div>
                 {% endfor %}
@@ -81,8 +83,13 @@
             <input type="hidden" name="sSelCategory" value="{{sSelCategory}}">
             <input type="hidden" name="sSelImage" value="{{sSelImage}}">
 
+            {% for sCategory in aOpenedCategories %}
+            <input type="hidden" name="c[{{sCategory}}]" value="{{sCategory}}">
+            {% endfor %}
+
             <div class="actions-panel">
                 <div class="btn-group w100">
+                    <a class="btn btn-primary" type="submit" href="{{sBaseURL}}"><i class="bi bi-arrow-repeat"></i></a>
                     <button class="btn btn-success" title="" type="submit" name="action" value="create_image"><i class="bi bi-file-plus"></i></button>
                     <button class="btn btn-secondary" title="" type="submit" name="action" value="edit_image"><i class="bi bi-pencil"></i></button>
                     <button class="btn btn-danger" title="" type="submit" name="action" value="remove_image"><i class="bi bi-trash"></i></button>
@@ -95,13 +102,19 @@
             <div class="gallery-grid">
                 {% for oImage in aImages %}
                     <div class="image-cell">
-                        <input class="form-check-input mt-0" type="checkbox" value="" name="images[{{oImage[0]}}]" />
+                        <input class="form-check-input mt-0" type="checkbox" value="{{oImage[0]}}" name="images[]" />
                         <a 
                             target="__blank"
                             class="list-group-item list-group-item-action {{ 'active' if oImage[0]|string == sSelImage|string }} " 
                             href="getfile?sID={{ oImage[0] }}"
                         >
-                            <img src="{{ oImage[2] }}" alt="">
+                            <img 
+                                src="{{ oImage[2] }}" 
+                                alt="" 
+                                loading="lazy" 
+                                onerror="this.classList.add('error')"
+                                onload="this.classList.add('loaded')"
+                            >
                         </a>
                     </div>
                 {% endfor %}
