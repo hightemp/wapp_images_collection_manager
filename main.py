@@ -124,6 +124,16 @@ def index():
         if request.form["action"]=="cancel":
             return redirect("/")
         if request.form["action"]=="accept_create_image":
+            
+            aFiles = request.form.getlist("files[]")
+            for oFile in aFiles:
+                sPath = os.path.join(UPLOAD_PATH, oFile.filename)
+                sFileName = os.path.basename(sPath)
+                oFile.save(sPath)
+                sRelFilePath = f"{UPLOAD_PATH_REL}/{oFile.filename}"
+                get_db().execute("INSERT INTO image (name, path) VALUES (?, ?)", (sFileName, sRelFilePath))
+                get_db().commit()
+            
             sHTML = request.form.get("html-images")
             oM = re.findall(r"<img[^<]*src=\"([^\"]+)\"", sHTML)
             if oM != None and len(oM)>0:
